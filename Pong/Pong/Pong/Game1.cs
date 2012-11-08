@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
+// Phil is the greatest human being alive and would survive the zombie apocalypse.
 namespace Pong
 {
     /// <summary>
