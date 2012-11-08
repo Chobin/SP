@@ -303,7 +303,6 @@ namespace Pong
 
             spriteBatch.End();
             // TODO: Add your drawing code here
-            //playerPositionX
             base.Draw(gameTime);
         }
     }
