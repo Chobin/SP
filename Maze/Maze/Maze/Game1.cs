@@ -18,6 +18,9 @@ namespace Maze
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Player player;
+
+        
 
         public Game1()
         {
@@ -34,7 +37,7 @@ namespace Maze
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            player = new Player(this);
             base.Initialize();
         }
 
@@ -46,6 +49,11 @@ namespace Maze
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            //load player texture here, for now it will be random guy from my other game
+            Vector2 playerStartPos = new Vector2(60, 60);
+            Texture2D playerTexture = Content.Load<Texture2D>("player");
+
+            player.Initialize(playerTexture, playerStartPos);
 
             // TODO: use this.Content to load your game content here
         }
@@ -67,12 +75,28 @@ namespace Maze
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape))
                 this.Exit();
 
+
             // TODO: Add your update logic here
+            player.CheckInput();
+            CheckPlayerCollisions();
 
             base.Update(gameTime);
+        }
+
+        private void CheckPlayerCollisions()
+        {
+            //player position is the top left of the texture so add size of texture to keep his whole body on screen
+            if ((player.Position.X + player.Width) > GraphicsDevice.Viewport.TitleSafeArea.Width)
+                player.Position.X = GraphicsDevice.Viewport.TitleSafeArea.Width - player.Width;
+            else if (player.Position.X < 0)
+                player.Position.X = 0;
+            if ((player.Position.Y + player.Height) > GraphicsDevice.Viewport.TitleSafeArea.Height)
+                player.Position.Y = GraphicsDevice.Viewport.TitleSafeArea.Height - player.Height;
+            else if (player.Position.Y < 0)
+                player.Position.Y = 0;
         }
 
         /// <summary>
@@ -81,10 +105,12 @@ namespace Maze
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            player.Draw(spriteBatch);
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
