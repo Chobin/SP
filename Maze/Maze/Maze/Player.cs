@@ -7,5 +7,7 @@ namespace Maze
 {
     class Player
     {
+        int whats;
+        int that;
     }
 }
