@@ -28,7 +28,20 @@ namespace Maze
             // TODO: Construct any child components here
             walkable = false;
         }
+        public int Width
+        {
+            get { return Texture.Width; }
+        }
 
+        // Get the height of the player ship
+        public int Height
+        {
+            get { return Texture.Height; }
+        }
+        public void SetTexture(Texture2D tex)
+        {
+            Texture = tex;
+        }
         /// <summary>
         /// Allows the game component to perform any initialization it needs to before starting
         /// to run.  This is where it can query for any required services and load content.

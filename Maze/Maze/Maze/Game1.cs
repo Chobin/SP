@@ -54,8 +54,17 @@ namespace Maze
             Texture2D playerTexture = Content.Load<Texture2D>("player");
 
             player.Initialize(playerTexture, playerStartPos);
+            GenerateMaze(20, 20);
+            //load our maze textures here
 
             // TODO: use this.Content to load your game content here
+        }
+        public FullMaze GenerateMaze(int width, int height)
+        {
+            FullMaze maze = new FullMaze(this);
+            maze.Initialize(width, height);
+            //do mazelols.
+            return maze;
         }
 
         /// <summary>
