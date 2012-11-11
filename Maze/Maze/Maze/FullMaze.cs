@@ -43,15 +43,25 @@ namespace Maze
             Random rnd = new Random(w * h);//seed for some reason
             Vector2 startPosition = new Vector2(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
             Vector2 endPosition = new Vector2(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
-            while (IsFirstToCloseToSecond(startPosition,endPosition,2))
+            while (IsFirstTooCloseToSecond(startPosition,endPosition,2))
                 endPosition = new Vector2(rnd.Next(0, w), rnd.Next(0, h));//create a new ending position because this one is too close!
 
+            //we have a good start and end position, so go create the maze from start to finish!
             
+
             base.Initialize();
         }
 
-        private bool IsFirstToCloseToSecond(Vector2 first, Vector2 second, int within)
+        private bool IsFirstTooCloseToSecond(Vector2 first, Vector2 second, int within)
         {
+            if (first.X + within > second.X && first.X - within < second.X)//then the x point is within! so check the Y
+            {
+                if (first.Y + within > second.Y && first.Y - within < second.Y)//it is within the y also? oh shit!
+                {
+                    return true;
+                }
+            }
+            
             return false;
         }
         /// <summary>
