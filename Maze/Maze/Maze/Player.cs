@@ -18,6 +18,7 @@ namespace Maze
         public float speedX;
         public float speedY;
         int MOVEMENTSPEED;
+        float PLAYERSCALE;
         public Vector2 Speed
         {
             get
@@ -27,20 +28,20 @@ namespace Maze
         }
         public int Width
         {
-            get { return PlayerTexture.Width; }
+            get { return (int)(PlayerTexture.Width * PLAYERSCALE); }
         }
 
         // Get the height of the player ship
         public int Height
         {
-            get { return PlayerTexture.Height; }
+            get { return (int)(PlayerTexture.Height * PLAYERSCALE); }
         }
         public Player(Game game)
             : base(game)
         {
             // TODO: Construct any child components here
         }
-        public void Initialize(Texture2D tex, Vector2 pos)
+        public void Initialize(Texture2D tex, Vector2 pos, float playerScale)
         {
             PlayerTexture = tex;
             Position = pos;
@@ -48,6 +49,7 @@ namespace Maze
             speedX = 0;
             speedY = 0;
             MOVEMENTSPEED = 5;//5 pixels
+            PLAYERSCALE = playerScale;
             base.Initialize();
         }
         public void SetTexture(Texture2D tex)
@@ -56,7 +58,8 @@ namespace Maze
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            Rectangle rectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(PlayerTexture.Width * PLAYERSCALE), (int)(PlayerTexture.Height * PLAYERSCALE));
+            spriteBatch.Draw(PlayerTexture, rectangle, Color.White);
         }
 
         public void CheckInput()

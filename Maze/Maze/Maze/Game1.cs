@@ -19,6 +19,7 @@ namespace Maze
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Player player;
+        FullMaze CurrentMaze;
 
         
 
@@ -50,11 +51,12 @@ namespace Maze
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             //load player texture here, for now it will be random guy from my other game
-            Vector2 playerStartPos = new Vector2(60, 60);
+            
             Texture2D playerTexture = Content.Load<Texture2D>("player");
 
-            player.Initialize(playerTexture, playerStartPos);
-            GenerateMaze(20, 20);
+            CurrentMaze = GenerateMaze(640, 480);
+            
+            player.Initialize(playerTexture, CurrentMaze.StartPosition, 0.25f);
             //load our maze textures here
 
             // TODO: use this.Content to load your game content here
