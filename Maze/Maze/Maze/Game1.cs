@@ -56,7 +56,7 @@ namespace Maze
 
             currentMaze = GenerateMaze(10, 10);
             
-            player.Initialize(playerTexture, currentMaze.StartPosition, 0.25f);
+            player.Initialize(playerTexture, currentMaze.StartPosition);
             //load our maze textures here
 
             // TODO: use this.Content to load your game content here
@@ -101,14 +101,14 @@ namespace Maze
         private void CheckPlayerCollisions()
         {
             //player position is the top left of the texture so add size of texture to keep his whole body on screen
-            if ((player.X + player.Width) > GraphicsDevice.Viewport.TitleSafeArea.Width)
-                player.X = GraphicsDevice.Viewport.TitleSafeArea.Width - player.Width;
-            else if (player.X < 0)
-                player.X = 0;
-            if ((player.Y + player.Height) > GraphicsDevice.Viewport.TitleSafeArea.Height)
-                player.Y = GraphicsDevice.Viewport.TitleSafeArea.Height - player.Height;
-            else if (player.Y < 0)
-                player.Y = 0;
+            if (player.Right > GraphicsDevice.Viewport.TitleSafeArea.Width)
+                player.Right = GraphicsDevice.Viewport.TitleSafeArea.Width;
+            else if (player.Left < 0)
+                player.Left = 0;
+            if (player.Bottom > GraphicsDevice.Viewport.TitleSafeArea.Height)
+                player.Bottom = GraphicsDevice.Viewport.TitleSafeArea.Height;
+            else if (player.Top < 0)
+                player.Top = 0;
         }
 
         /// <summary>

@@ -65,7 +65,8 @@ namespace Maze
                 {
                     mazeTiles[row, col] = new MazeTile(base.Game)
                     {
-                        Position = new Point(col * _noTexture.Width, row * _noTexture.Height),
+                        X = col * _noTexture.Width,
+                        Y = row * _noTexture.Height,
                         Texture = _noTexture,
                     };
                 }

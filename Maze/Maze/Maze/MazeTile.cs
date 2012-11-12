@@ -18,10 +18,13 @@ namespace Maze
     public class MazeTile : Microsoft.Xna.Framework.GameComponent
     {
         int Type;
-        public Point Position { get; set; }
+        private Point _position;
         public Texture2D Texture { get; set; }
         bool walkable;
-        
+
+        public int X { get { return _position.X; } set { _position.X = value; } }
+        public int Y { get { return _position.Y; } set { _position.Y = value; } }
+
         public MazeTile(Game game)
             : base(game)
         {
@@ -59,7 +62,7 @@ namespace Maze
                     //and something else!
                     break;
             }
-            Position = pos;
+            _position = pos;
             base.Initialize();
         }
 
@@ -77,7 +80,8 @@ namespace Maze
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, new Vector2(Position.X, Position.Y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            //spriteBatch.Draw(Texture, new Vector2(Position.X, Position.Y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(Texture, new Rectangle(this.X, this.Y, Constants.TileWidth, Constants.TileHeight), Color.White);
         }
     }
 }
