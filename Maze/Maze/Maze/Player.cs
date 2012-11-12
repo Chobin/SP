@@ -68,15 +68,15 @@ namespace Maze
             {
                 Position.Y -= MOVEMENTSPEED;
             }
-            else if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.S) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Down))
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.S) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Down))
             {
                 Position.Y += MOVEMENTSPEED;
             }
-            else if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.A) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Left))
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.A) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Left))
             {
                 Position.X -= MOVEMENTSPEED;
             }
-            else if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.D) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Right))
+            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.D) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Right))
             {
                 Position.X += MOVEMENTSPEED;
             }
