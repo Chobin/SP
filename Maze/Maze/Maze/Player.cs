@@ -18,7 +18,27 @@ namespace Maze
         public float speedX;
         public float speedY;
         int MOVEMENTSPEED;
-        float PLAYERSCALE;
+
+        public int Top
+        {
+            get { return _position.Y; }
+            set { _position.Y = Math.Max(0, value); }
+        }
+        public int Bottom
+        {
+            get { return _position.Y + Constants.PlayerHeight; }
+            set { _position.Y = Math.Max(0, value - Constants.PlayerHeight); }
+        }
+        public int Left
+        {
+            get { return _position.X; }
+            set { _position.X = Math.Max(0, value); }
+        }
+        public int Right
+        {
+            get { return _position.X + Constants.PlayerWidth; }
+            set { _position.X = Math.Max(0, value - Constants.PlayerWidth); }
+        }
 
         public int X { get { return _position.X; } set { _position.X = value; } }
         public int Y { get { return _position.Y; } set { _position.Y = value; } }
@@ -30,22 +50,12 @@ namespace Maze
                 return new Vector2(speedX, speedY);
             }
         }
-        public int Width
-        {
-            get { return (int)(PlayerTexture.Width * PLAYERSCALE); }
-        }
-
-        // Get the height of the player ship
-        public int Height
-        {
-            get { return (int)(PlayerTexture.Height * PLAYERSCALE); }
-        }
         public Player(Game game)
             : base(game)
         {
             // TODO: Construct any child components here
         }
-        public void Initialize(Texture2D tex, Point pos, float playerScale)
+        public void Initialize(Texture2D tex, Point pos)
         {
             PlayerTexture = tex;
             _position = pos;
@@ -53,7 +63,6 @@ namespace Maze
             speedX = 0;
             speedY = 0;
             MOVEMENTSPEED = 5;//5 pixels
-            PLAYERSCALE = playerScale;
             base.Initialize();
         }
         public void SetTexture(Texture2D tex)
@@ -62,7 +71,7 @@ namespace Maze
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            Rectangle rectangle = new Rectangle(_position.X, _position.Y, (int)(PlayerTexture.Width * PLAYERSCALE), (int)(PlayerTexture.Height * PLAYERSCALE));
+            Rectangle rectangle = new Rectangle(_position.X, _position.Y, Constants.TileWidth, Constants.TileHeight);
             spriteBatch.Draw(PlayerTexture, rectangle, Color.White);
         }
 
