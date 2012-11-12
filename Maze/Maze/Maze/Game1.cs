@@ -61,10 +61,11 @@ namespace Maze
 
             // TODO: use this.Content to load your game content here
         }
+
         public FullMaze GenerateMaze(int width, int height)
         {
-            FullMaze maze = new FullMaze(this);
-            maze.Initialize(width, height);
+            FullMaze maze = new FullMaze(this, width, height);
+            maze.Initialize();
             //do mazelols.
             return maze;
         }
@@ -100,14 +101,14 @@ namespace Maze
         private void CheckPlayerCollisions()
         {
             //player position is the top left of the texture so add size of texture to keep his whole body on screen
-            if ((player.Position.X + player.Width) > GraphicsDevice.Viewport.TitleSafeArea.Width)
-                player.Position.X = GraphicsDevice.Viewport.TitleSafeArea.Width - player.Width;
-            else if (player.Position.X < 0)
-                player.Position.X = 0;
-            if ((player.Position.Y + player.Height) > GraphicsDevice.Viewport.TitleSafeArea.Height)
-                player.Position.Y = GraphicsDevice.Viewport.TitleSafeArea.Height - player.Height;
-            else if (player.Position.Y < 0)
-                player.Position.Y = 0;
+            if ((player.X + player.Width) > GraphicsDevice.Viewport.TitleSafeArea.Width)
+                player.X = GraphicsDevice.Viewport.TitleSafeArea.Width - player.Width;
+            else if (player.X < 0)
+                player.X = 0;
+            if ((player.Y + player.Height) > GraphicsDevice.Viewport.TitleSafeArea.Height)
+                player.Y = GraphicsDevice.Viewport.TitleSafeArea.Height - player.Height;
+            else if (player.Y < 0)
+                player.Y = 0;
         }
 
         /// <summary>

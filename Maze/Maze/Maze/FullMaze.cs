@@ -22,22 +22,26 @@ namespace Maze
         private readonly Texture2D _startTexture;
         private readonly Texture2D _endTexture;
 
-        int width;
-        int height;
+        private readonly int _width;
+        private readonly int _height;
+
         int[,] mazeDigits;
-        public Point StartPosition;
-        Point EndPosition;
+        public Point StartPosition { get; set; }
+        public Point EndPosition { get; set; }
 
         /// <summary> 2D Array of tiles, as [row,column]. </summary>
         private MazeTile[,] mazeTiles;
 
-        public FullMaze(Game game)
+        public FullMaze(Game game, int width, int height)
             : base(game)
         {
             _noTexture = game.Content.Load<Texture2D>("no");
             _yesTexture = game.Content.Load<Texture2D>("yes");
             _startTexture = game.Content.Load<Texture2D>("start");
             _endTexture = game.Content.Load<Texture2D>("end");
+
+            _width = width;
+            _height = height;
 
             // TODO: Construct any child components here
         }
@@ -46,15 +50,15 @@ namespace Maze
         /// Allows the game component to perform any initialization it needs to before starting
         /// to run.  This is where it can query for any required services and load content.
         /// </summary>
-        public void Initialize(int w, int h)
+        public override void Initialize()
         {
+            base.Initialize();
+
             // TODO: Add your initialization code here
-            width = w;
-            height = h;
-            mazeDigits = new int[w, h];//initializes all positions to 0!
+            mazeDigits = new int[_width, _height];//initializes all positions to 0!
 
             // Initialize the Maze Tiles, all with the "No" texture, specifying each of their positions.
-            mazeTiles = new MazeTile[w, h];
+            mazeTiles = new MazeTile[_width, _height];
             for (int row = 0; row < mazeTiles.GetLength(0); row++)
             {
                 for (int col = 0; col < mazeTiles.GetLength(1); col++)
@@ -67,11 +71,11 @@ namespace Maze
                 }
             }
 
-            Random rnd = new Random(w * h * DateTime.Now.Millisecond);//seed for some reason
-            Point startPosition = new Point(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
-            Point endPosition = new Point(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
+            Random rnd = new Random(_width * _height * DateTime.Now.Millisecond);//seed for some reason
+            Point startPosition = new Point(rnd.Next(0, _width), rnd.Next(0, _height));//creates the randomized start position (between 0-width and 0-height)
+            Point endPosition = new Point(rnd.Next(0, _width), rnd.Next(0, _height));//creates the randomized start position (between 0-width and 0-height)
             while (IsFirstTooCloseToSecond(startPosition,endPosition,2))
-                endPosition = new Point(rnd.Next(0, w), rnd.Next(0, h));//create a new ending position because this one is too close!
+                endPosition = new Point(rnd.Next(0, _width), rnd.Next(0, _height));//create a new ending position because this one is too close!
 
             //we have a good start and end position, so go create the maze from start to finish!
             StartPosition = startPosition;
