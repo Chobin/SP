@@ -17,15 +17,28 @@ namespace Maze
     /// </summary>
     public class FullMaze : Microsoft.Xna.Framework.GameComponent
     {
+        private readonly Texture2D _noTexture;
+        private readonly Texture2D _yesTexture;
+        private readonly Texture2D _startTexture;
+        private readonly Texture2D _endTexture;
+
         int width;
         int height;
-        int[,] mazeDigits;//aparently this is a 2d array?
-        public Vector2 StartPosition;
-        Vector2 EndPosition;
-        MazeTile[,] mazeTiles;//aparently this is a 2d array?
+        int[,] mazeDigits;
+        public Point StartPosition;
+        Point EndPosition;
+
+        /// <summary> 2D Array of tiles, as [row,column]. </summary>
+        private MazeTile[,] mazeTiles;
+
         public FullMaze(Game game)
             : base(game)
         {
+            _noTexture = game.Content.Load<Texture2D>("no");
+            _yesTexture = game.Content.Load<Texture2D>("yes");
+            _startTexture = game.Content.Load<Texture2D>("start");
+            _endTexture = game.Content.Load<Texture2D>("end");
+
             // TODO: Construct any child components here
         }
 
@@ -40,21 +53,38 @@ namespace Maze
             height = h;
             mazeDigits = new int[w, h];//initializes all positions to 0!
 
-            mazeTiles = new MazeTile[w, h];//initializes all positions to null, so we need to create them all!
+            // Initialize the Maze Tiles, all with the "No" texture, specifying each of their positions.
+            mazeTiles = new MazeTile[w, h];
+            for (int row = 0; row < mazeTiles.GetLength(0); row++)
+            {
+                for (int col = 0; col < mazeTiles.GetLength(1); col++)
+                {
+                    mazeTiles[row, col] = new MazeTile(base.Game)
+                    {
+                        Position = new Point(col * _noTexture.Width, row * _noTexture.Height),
+                        Texture = _noTexture,
+                    };
+                }
+            }
+
             Random rnd = new Random(w * h * DateTime.Now.Millisecond);//seed for some reason
-            Vector2 startPosition = new Vector2(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
-            Vector2 endPosition = new Vector2(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
+            Point startPosition = new Point(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
+            Point endPosition = new Point(rnd.Next(0, w), rnd.Next(0, h));//creates the randomized start position (between 0-width and 0-height)
             while (IsFirstTooCloseToSecond(startPosition,endPosition,2))
-                endPosition = new Vector2(rnd.Next(0, w), rnd.Next(0, h));//create a new ending position because this one is too close!
+                endPosition = new Point(rnd.Next(0, w), rnd.Next(0, h));//create a new ending position because this one is too close!
 
             //we have a good start and end position, so go create the maze from start to finish!
             StartPosition = startPosition;
             EndPosition = endPosition;
 
+            // Start/End Tiles can use the Yes texture.
+            mazeTiles[startPosition.X, startPosition.Y].Texture = _startTexture;
+            mazeTiles[endPosition.X, endPosition.Y].Texture = _endTexture;
+
             base.Initialize();
         }
 
-        private bool IsFirstTooCloseToSecond(Vector2 first, Vector2 second, int within)
+        private bool IsFirstTooCloseToSecond(Point first, Point second, int within)
         {
             if (first.X + within > second.X && first.X - within < second.X)//then the x point is within! so check the Y
             {
@@ -75,6 +105,14 @@ namespace Maze
             // TODO: Add your update code here
 
             base.Update(gameTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (var mazeTile in mazeTiles)
+            {
+                mazeTile.Draw(spriteBatch);
+            }
         }
     }
 }

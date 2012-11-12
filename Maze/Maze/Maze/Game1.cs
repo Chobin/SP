@@ -19,7 +19,7 @@ namespace Maze
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Player player;
-        FullMaze CurrentMaze;
+        FullMaze currentMaze;
 
         
 
@@ -54,9 +54,9 @@ namespace Maze
             
             Texture2D playerTexture = Content.Load<Texture2D>("player");
 
-            CurrentMaze = GenerateMaze(640, 480);
+            currentMaze = GenerateMaze(10, 10);
             
-            player.Initialize(playerTexture, CurrentMaze.StartPosition, 0.25f);
+            player.Initialize(playerTexture, currentMaze.StartPosition, 0.25f);
             //load our maze textures here
 
             // TODO: use this.Content to load your game content here
@@ -120,6 +120,7 @@ namespace Maze
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            currentMaze.Draw(spriteBatch);
             player.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);

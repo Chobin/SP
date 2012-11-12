@@ -18,8 +18,8 @@ namespace Maze
     public class MazeTile : Microsoft.Xna.Framework.GameComponent
     {
         int Type;
-        Vector2 Position;
-        Texture2D Texture;
+        public Point Position { get; set; }
+        public Texture2D Texture { get; set; }
         bool walkable;
         
         public MazeTile(Game game)
@@ -38,15 +38,12 @@ namespace Maze
         {
             get { return Texture.Height; }
         }
-        public void SetTexture(Texture2D tex)
-        {
-            Texture = tex;
-        }
+
         /// <summary>
         /// Allows the game component to perform any initialization it needs to before starting
         /// to run.  This is where it can query for any required services and load content.
         /// </summary>
-        public void Initialize(int type, Vector2 pos)
+        public void Initialize(int type, Point pos)
         {
             // TODO: Add your initialization code here
             switch (Type)
@@ -80,7 +77,7 @@ namespace Maze
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(Texture, new Vector2(Position.X, Position.Y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
     }
 }

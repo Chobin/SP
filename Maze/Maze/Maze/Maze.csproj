@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FullMaze.cs" />
+    <Compile Include="LINQExtensions.cs" />
     <Compile Include="MazeTile.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,7 +12,7 @@ namespace Maze
     {
         public Texture2D PlayerTexture;
         // Position of the Player relative to the upper left side of the screen
-        public Vector2 Position;
+        public Point Position;
         // State of the player
         public bool Active;
         public float speedX;
@@ -41,7 +41,7 @@ namespace Maze
         {
             // TODO: Construct any child components here
         }
-        public void Initialize(Texture2D tex, Vector2 pos, float playerScale)
+        public void Initialize(Texture2D tex, Point pos, float playerScale)
         {
             PlayerTexture = tex;
             Position = pos;
