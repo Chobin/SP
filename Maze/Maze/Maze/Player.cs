@@ -12,13 +12,17 @@ namespace Maze
     {
         public Texture2D PlayerTexture;
         // Position of the Player relative to the upper left side of the screen
-        public Point Position;
+        private Point _position;
         // State of the player
         public bool Active;
         public float speedX;
         public float speedY;
         int MOVEMENTSPEED;
         float PLAYERSCALE;
+
+        public int X { get { return _position.X; } set { _position.X = value; } }
+        public int Y { get { return _position.Y; } set { _position.Y = value; } }
+
         public Vector2 Speed
         {
             get
@@ -44,7 +48,7 @@ namespace Maze
         public void Initialize(Texture2D tex, Point pos, float playerScale)
         {
             PlayerTexture = tex;
-            Position = pos;
+            _position = pos;
             Active = true;
             speedX = 0;
             speedY = 0;
@@ -58,7 +62,7 @@ namespace Maze
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            Rectangle rectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(PlayerTexture.Width * PLAYERSCALE), (int)(PlayerTexture.Height * PLAYERSCALE));
+            Rectangle rectangle = new Rectangle(_position.X, _position.Y, (int)(PlayerTexture.Width * PLAYERSCALE), (int)(PlayerTexture.Height * PLAYERSCALE));
             spriteBatch.Draw(PlayerTexture, rectangle, Color.White);
         }
 
@@ -66,19 +70,19 @@ namespace Maze
         {
             if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.W) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Up))
             {
-                Position.Y -= MOVEMENTSPEED;
+                this.Y -= MOVEMENTSPEED;
             }
             if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.S) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Down))
             {
-                Position.Y += MOVEMENTSPEED;
+                this.Y += MOVEMENTSPEED;
             }
             if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.A) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Left))
             {
-                Position.X -= MOVEMENTSPEED;
+                this.X -= MOVEMENTSPEED;
             }
             if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.D) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Right))
             {
-                Position.X += MOVEMENTSPEED;
+                this.X += MOVEMENTSPEED;
             }
         }
     }
