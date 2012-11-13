@@ -24,17 +24,18 @@ namespace Maze
         public ISimpleWorldPosition StartPosition { get; private set; }
         public ISimpleWorldPosition EndPosition { get; private set; }
 
-        /// <summary> 2D Array of tiles, as [column,row]. </summary>
+        /// <summary> 2D Array of tiles, as [col,row]. </summary>
         private MazeTile[,] mazeTiles;
 
         public FullMaze(Game game, int width, int height)
             : base(game)
         {
-            MazeTile.TileTextures.Add( MazeTile.ETileType.No, game.Content.Load<Texture2D>("no"));
-            MazeTile.TileTextures.Add( MazeTile.ETileType.Yes, game.Content.Load<Texture2D>("yes"));
-            MazeTile.TileTextures.Add( MazeTile.ETileType.Maybe, game.Content.Load<Texture2D>("maybe"));
-            MazeTile.TileSubTextures.Add( MazeTile.ETileSubType.Start, game.Content.Load<Texture2D>("start"));
-            MazeTile.TileSubTextures.Add( MazeTile.ETileSubType.End, game.Content.Load<Texture2D>("end"));
+            MazeTile.TileTextures.Clear();
+            MazeTile.TileTextures[MazeTile.ETileType.No] = game.Content.Load<Texture2D>("no");
+            MazeTile.TileTextures[MazeTile.ETileType.Yes] = game.Content.Load<Texture2D>("yes");
+            MazeTile.TileTextures[MazeTile.ETileType.Maybe] = game.Content.Load<Texture2D>("maybe");
+            MazeTile.TileSubTextures[MazeTile.ETileSubType.Start] = game.Content.Load<Texture2D>("start");
+            MazeTile.TileSubTextures[MazeTile.ETileSubType.End] = game.Content.Load<Texture2D>("end");
 
             _width = width;
             _height = height;
@@ -55,11 +56,11 @@ namespace Maze
 
             // Initialize the Maze Tiles, all with the "No" texture, specifying each of their positions.
             mazeTiles = new MazeTile[_width, _height];
-            for (int row = 0; row < mazeTiles.GetLength(0); row++)
+            for (int col = 0; col < mazeTiles.GetLength(0); col++)
             {
-                for (int col = 0; col < mazeTiles.GetLength(1); col++)
+                for (int row = 0; row < mazeTiles.GetLength(1); row++)
                 {
-                    mazeTiles[row, col] = new MazeTile(base.Game, MazeTile.ETileType.No, new Point(col * Constants.Tile.Width, row * Constants.Tile.Height));
+                    mazeTiles[row, col] = new MazeTile(base.Game, new Point(col * Constants.Tile.Width, row * Constants.Tile.Height));
                 }
             }
 
@@ -72,11 +73,34 @@ namespace Maze
             }
 
             // We have a good start and end position, so go create the maze from start to finish!
-            StartPosition = new WorldPosition(startPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
-            EndPosition = new WorldPosition(endPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
+            {
+                var startLeftOfEnd = (startPosition.X < endPosition.X);
+                int delta = (startLeftOfEnd) ? 1 : -1;
+                Func<int, bool> condition = (startLeftOfEnd) ? (Func<int, bool>)((x) => x <= endPosition.X) : (Func<int, bool>)((x) => x >= endPosition.X);
+                for (int x = startPosition.X; condition(x); x += delta)
+                {
+                    // Make all tiles from Start to End walkable for now, as a straight line.
+                    mazeTiles[startPosition.Y, x].TileType = MazeTile.ETileType.Yes;
+                }
+            }
+
+            {
+                var startAboveEnd = (startPosition.Y < endPosition.Y);
+                int delta = (startAboveEnd) ? 1 : -1;
+                Func<int, bool> condition = (startAboveEnd) ? (Func<int, bool>)((y) => y <= endPosition.Y) : (Func<int, bool>)((y) => y >= endPosition.Y);
+                for (int y = startPosition.Y; condition(y); y += delta)
+                {
+                    // Make all tiles from Start to End walkable for now, as a straight line.
+                    mazeTiles[y, endPosition.X].TileType = MazeTile.ETileType.Yes;
+                }
+            }
 
             mazeTiles[startPosition.Y, startPosition.X].TileSubType = MazeTile.ETileSubType.Start;
             mazeTiles[endPosition.Y, endPosition.X].TileSubType = MazeTile.ETileSubType.End;
+
+            // Inform the outside world of the real-world coordiantes (pixels) for the Start/End tiles.
+            StartPosition = new WorldPosition(startPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
+            EndPosition = new WorldPosition(endPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
 
             base.Initialize();
         }
@@ -93,6 +117,7 @@ namespace Maze
             
             return false;
         }
+        
         /// <summary>
         /// Allows the game component to update itself.
         /// </summary>

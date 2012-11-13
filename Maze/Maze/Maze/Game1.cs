@@ -46,13 +46,7 @@ namespace Maze
             // Create a new SpriteBatch, which can be used to draw textures. A single instance is enough for the lifetime of the game, unless we need another.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // Create out Maze, which is the entire "world" the player will interact with.
-            _currentMaze = new FullMaze(this, Constants.Maze.Width, Constants.Maze.Height);
-            _currentMaze.Initialize();
-
-            // Initialize the player, informing it of it's starting point, somewhere within the maze, as the randomly generated maze tells us.
-            _player = new Player(this, _currentMaze.StartPosition);
-            _player.Initialize();
+            CreateAll();
         }
         
         /// <summary> UnloadContent will be called once per game and is the place to unload all content. </summary>
@@ -61,18 +55,48 @@ namespace Maze
             // TODO: Unload any non ContentManager content here
         }
 
+        private void CreateAll()
+        {
+            // Create out Maze, which is the entire "world" the player will interact with.
+            _currentMaze = new FullMaze(this, Constants.Maze.Width, Constants.Maze.Height);
+            _currentMaze.Initialize();
+
+            // Initialize the player, informing it of it's starting point, somewhere within the maze, as the randomly generated maze tells us.
+            _player = new Player(this, _currentMaze.StartPosition);
+            _player.Initialize();
+        }
+
+        private void Reload()
+        {
+            _player.Dispose();
+            _player = null;
+            _currentMaze.Dispose();
+            _currentMaze = null;
+
+            CreateAll();
+        }
+
         protected override void Update(GameTime gameTime)
         {
+            // At the start of every Update frame, the Game Keyboard must be updated so we know what has changed between frames.
+            GameKeyboard.UpdateKeyboardStates();
+
             // Allows the game to exit
             if (GameKeyboard.PlayerOne.IsKeyDown(Keys.Escape))
                 this.Exit();
-            
+
+            if (GameKeyboard.PlayerOne.IsKeyDownFromUp(Keys.F5))
+                this.Reload();
+
             _player.CheckInput();
             CheckPlayerCollisions();
 
             base.Update(gameTime);
         }
 
+
+        // TODO: This entire method needs to be in the Player.Update method, to prevent the movement if we try to go over the bounds. Otherwise, we won't be able to scan the entire Tile Map to see
+        // if the position we've moved to can somehow be rolled back. This is crucial for tile collision.
         private void CheckPlayerCollisions()
         {
             // Ensure the player doesn't walk beyond the bounds of the game, and if so, force them back into the area.

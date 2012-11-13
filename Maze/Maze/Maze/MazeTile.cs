@@ -34,12 +34,13 @@ namespace Maze
             End,
         }
 
-        private readonly ETileType _tileType;
+        /// <summary> Gets or sets the primary type in use. </summary>
+        public ETileType TileType { get; set; }
 
         /// <summary> Gets the position of the tile. </summary>
         public IReadOnlyWorldPosition Position { get; private set; }
 
-        /// <summary> The sub type in use, if any. </summary>
+        /// <summary> Gets or sets the sub type in use, if any. </summary>
         public ETileSubType TileSubType { get; set; }
 
         private Texture2D Texture
@@ -49,7 +50,7 @@ namespace Maze
                 switch (TileSubType)
                 {
                     case ETileSubType.None:
-                        return TileTextures[_tileType];
+                        return TileTextures[TileType];
                     case ETileSubType.Start:
                         return TileSubTextures[TileSubType];
                     case ETileSubType.End:
@@ -66,21 +67,10 @@ namespace Maze
             TileSubTextures = new Dictionary<ETileSubType, Texture2D>();
         }
 
-        public MazeTile(Game game, ETileType tileType, Point position)
+        public MazeTile(Game game, Point position)
             : base(game)
         {
-            _tileType = tileType;
-
-            switch (_tileType)
-            {
-                case ETileType.Yes:
-                    break;
-                case ETileType.No:
-                    break;
-                case ETileType.Maybe:
-                    break;
-            }
-
+            TileType = ETileType.No;
             Position = new WorldPosition(position);
         }
         

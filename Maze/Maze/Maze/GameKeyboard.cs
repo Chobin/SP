@@ -25,21 +25,57 @@ namespace Maze
             get { return (_playerOne == null) ? _playerOne = new GameKeyboard(PlayerIndex.One) : _playerOne; }
         }
 
-        private GameKeyboard(PlayerIndex playerIndex)
-        {
-            _playerIndex = playerIndex;
-        }
-
         /// <summary> The PlayerIndex for this keyboard instance. </summary>
         private readonly PlayerIndex _playerIndex;
 
-        /// <summary> Gets the if any of the specified keys are down for this instance. </summary>
-        public bool IsKeyDown(params Keys[] keys)
+        /// <summary> The state of the keyboard in the previous 'frame'. </summary>
+        private KeyboardState objPreviousState;
+
+        /// <summary> The state of the keyboard in the current 'frame'. </summary>
+        private KeyboardState objCurrentState;
+
+        private GameKeyboard(PlayerIndex playerIndex)
         {
-            var keyboardState = Keyboard.GetState(_playerIndex);
-            return (from key in keys
-                    where keyboardState.IsKeyDown(key)
-                    select key).Any();
+            _playerIndex = playerIndex;
+            UpdateKeyboardState();
         }
+
+        /// <summary> Gets if any of the specified keys are down and were up in the previous state. </summary>
+        public bool IsKeyDownFromUp(params Keys[] objKeys)
+        {
+            return objKeys.Any(objKey => (objCurrentState.IsKeyDown(objKey) && objPreviousState.IsKeyUp(objKey)));
+        }
+
+        /// <summary> Gets if any of the specified keys are down. </summary>
+        public bool IsKeyDown(params Keys[] objKeys)
+        {
+            return objKeys.Any(objKey => objCurrentState.IsKeyDown(objKey));
+        }
+
+        /// <summary> Gets if any of the specified keys are up and were down in the previous state. </summary>
+        public bool IsKeyUpFromDown(params Keys[] objKeys)
+        {
+            return objKeys.Any(objKey => (objCurrentState.IsKeyUp(objKey) && objPreviousState.IsKeyDown(objKey)));
+        }
+
+        /// <summary> Ges if any of the specified keys are up. </summary>
+        public bool IsKeyUp(params Keys[] objKeys)
+        {
+            return objKeys.Any(objKey => objCurrentState.IsKeyUp(objKey));
+        }
+        
+        /// <summary> Updates the previous and current keyboard states. </summary>
+        public static void UpdateKeyboardStates()
+        {
+            if (_playerOne != null)
+                _playerOne.UpdateKeyboardState();
+        }
+
+        /// <summary> Updates the previous and current keyboard states. </summary>
+        public void UpdateKeyboardState()
+        {
+            objPreviousState = objCurrentState;
+            objCurrentState = Keyboard.GetState(_playerIndex);
+        }        
     }
 }
