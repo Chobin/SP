@@ -17,11 +17,6 @@ namespace Maze
     /// </summary>
     public class FullMaze : Microsoft.Xna.Framework.GameComponent
     {
-        private readonly Texture2D _noTexture;
-        private readonly Texture2D _yesTexture;
-        private readonly Texture2D _startTexture;
-        private readonly Texture2D _endTexture;
-
         private readonly int _width;
         private readonly int _height;
 
@@ -35,10 +30,11 @@ namespace Maze
         public FullMaze(Game game, int width, int height)
             : base(game)
         {
-            _noTexture = game.Content.Load<Texture2D>("no");
-            _yesTexture = game.Content.Load<Texture2D>("yes");
-            _startTexture = game.Content.Load<Texture2D>("start");
-            _endTexture = game.Content.Load<Texture2D>("end");
+            MazeTile.TileTextures.Add( MazeTile.ETileType.No, game.Content.Load<Texture2D>("no"));
+            MazeTile.TileTextures.Add( MazeTile.ETileType.Yes, game.Content.Load<Texture2D>("yes"));
+            MazeTile.TileTextures.Add( MazeTile.ETileType.Maybe, game.Content.Load<Texture2D>("maybe"));
+            MazeTile.TileSubTextures.Add( MazeTile.ETileSubType.Start, game.Content.Load<Texture2D>("start"));
+            MazeTile.TileSubTextures.Add( MazeTile.ETileSubType.End, game.Content.Load<Texture2D>("end"));
 
             _width = width;
             _height = height;
@@ -63,26 +59,24 @@ namespace Maze
             {
                 for (int col = 0; col < mazeTiles.GetLength(1); col++)
                 {
-                    mazeTiles[row, col] = new MazeTile(base.Game, MazeTile.TileType.No, new Point(col * _noTexture.Width, row * _noTexture.Height))
-                    {
-                        Texture = _noTexture,
-                    };
+                    mazeTiles[row, col] = new MazeTile(base.Game, MazeTile.ETileType.No, new Point(col * Constants.Tile.Width, row * Constants.Tile.Height));
                 }
             }
 
             Random rnd = new Random(_width * _height * DateTime.Now.Millisecond);//seed for some reason
             Point startPosition = new Point(rnd.Next(0, _width), rnd.Next(0, _height));//creates the randomized start position (between 0-width and 0-height)
             Point endPosition = new Point(rnd.Next(0, _width), rnd.Next(0, _height));//creates the randomized start position (between 0-width and 0-height)
-            while (IsFirstTooCloseToSecond(startPosition,endPosition,2))
+            while (IsFirstTooCloseToSecond(startPosition, endPosition, 2))
+            {
                 endPosition = new Point(rnd.Next(0, _width), rnd.Next(0, _height));//create a new ending position because this one is too close!
+            }
 
             // We have a good start and end position, so go create the maze from start to finish!
             StartPosition = new WorldPosition(startPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
             EndPosition = new WorldPosition(endPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
 
-            // Start/End Tiles can use the Yes texture.
-            mazeTiles[startPosition.Y, startPosition.X].Texture = _startTexture;
-            mazeTiles[endPosition.Y, endPosition.X].Texture = _endTexture;
+            mazeTiles[startPosition.Y, startPosition.X].TileSubType = MazeTile.ETileSubType.Start;
+            mazeTiles[endPosition.Y, endPosition.X].TileSubType = MazeTile.ETileSubType.End;
 
             base.Initialize();
         }
