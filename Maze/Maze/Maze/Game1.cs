@@ -16,83 +16,58 @@ namespace Maze
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        Player player;
-        FullMaze currentMaze;
-
-        
+        private GraphicsDeviceManager _graphics;
+        private SpriteBatch _spriteBatch;
+        private Player _player;
+        private FullMaze _currentMaze;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            // This must be done in the constructor, otherwise the initialization stack of the game will not be invoked properly and the entire XNA Game stack will be compromised! Don't move it!
+            _graphics = new GraphicsDeviceManager(this);
+
             Content.RootDirectory = "Content";
         }
 
         /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
+        ///     Allows the game to perform any initialization it needs to before starting to run.
+        ///     This is where it can query for any required services and load any non-graphic
+        ///     related content.  Calling base.Initialize will enumerate through any components
+        ///     and initialize them as well.
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            player = new Player(this);
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
+        /// <summary> LoadContent will be called once per game and is the place to load all of your content. </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            //load player texture here, for now it will be random guy from my other game
-            
-            Texture2D playerTexture = Content.Load<Texture2D>("player");
+            // Create a new SpriteBatch, which can be used to draw textures. A single instance is enough for the lifetime of the game, unless we need another.
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            currentMaze = GenerateMaze(10, 10);
-            
-            player.Initialize(playerTexture, currentMaze.StartPosition);
-            //load our maze textures here
+            // Create out Maze, which is the entire "world" the player will interact with.
+            _currentMaze = new FullMaze(this, Constants.Maze.Width, Constants.Maze.Height);
+            _currentMaze.Initialize();
 
-            // TODO: use this.Content to load your game content here
+            // Initialize the player, informing it of it's starting point, somewhere within the maze, as the randomly generated maze tells us.
+            _player = new Player(this, _currentMaze.StartPosition);
+            _player.Initialize();
         }
-
-        public FullMaze GenerateMaze(int width, int height)
-        {
-            FullMaze maze = new FullMaze(this, width, height);
-            maze.Initialize();
-            //do mazelols.
-            return maze;
-        }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
+        
+        /// <summary> UnloadContent will be called once per game and is the place to unload all content. </summary>
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape))
+            if (GameKeyboard.PlayerOne.IsKeyDown(Keys.Escape))
                 this.Exit();
-
-
-            // TODO: Add your update logic here
-            player.CheckInput();
+            
+            _player.CheckInput();
             CheckPlayerCollisions();
 
             base.Update(gameTime);
@@ -100,30 +75,26 @@ namespace Maze
 
         private void CheckPlayerCollisions()
         {
-            //player position is the top left of the texture so add size of texture to keep his whole body on screen
-            if (player.Right > GraphicsDevice.Viewport.TitleSafeArea.Width)
-                player.Right = GraphicsDevice.Viewport.TitleSafeArea.Width;
-            else if (player.Left < 0)
-                player.Left = 0;
-            if (player.Bottom > GraphicsDevice.Viewport.TitleSafeArea.Height)
-                player.Bottom = GraphicsDevice.Viewport.TitleSafeArea.Height;
-            else if (player.Top < 0)
-                player.Top = 0;
+            // Ensure the player doesn't walk beyond the bounds of the game, and if so, force them back into the area.
+            if (_player.Position.Right > Constants.Maze.WidthPixels)
+                _player.Position.Right = Constants.Maze.WidthPixels;
+            else if (_player.Position.Left < 0)
+                _player.Position.Left = 0;
+            if (_player.Position.Bottom > Constants.Maze.HeightPixels)
+                _player.Position.Bottom = Constants.Maze.HeightPixels;
+            else if (_player.Position.Top < 0)
+                _player.Position.Top = 0;
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
-            spriteBatch.Begin();
-            currentMaze.Draw(spriteBatch);
-            player.Draw(spriteBatch);
-            spriteBatch.End();
+            _spriteBatch.Begin();
+            _currentMaze.Draw(_spriteBatch);
+            _player.Draw(_spriteBatch);
+            _spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

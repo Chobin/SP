@@ -10,88 +10,46 @@ namespace Maze
 {
     class Player : Microsoft.Xna.Framework.GameComponent
     {
-        public Texture2D PlayerTexture;
-        // Position of the Player relative to the upper left side of the screen
-        private Point _position;
-        // State of the player
-        public bool Active;
-        public float speedX;
-        public float speedY;
-        int MOVEMENTSPEED;
+        /// <summary> The texture to use for the player. </summary>
+        private Texture2D _playerTexture;
 
-        public int Top
-        {
-            get { return _position.Y; }
-            set { _position.Y = Math.Max(0, value); }
-        }
-        public int Bottom
-        {
-            get { return _position.Y + Constants.PlayerHeight; }
-            set { _position.Y = Math.Max(0, value - Constants.PlayerHeight); }
-        }
-        public int Left
-        {
-            get { return _position.X; }
-            set { _position.X = Math.Max(0, value); }
-        }
-        public int Right
-        {
-            get { return _position.X + Constants.PlayerWidth; }
-            set { _position.X = Math.Max(0, value - Constants.PlayerWidth); }
-        }
+        /// <summary> Gets the position of the player. </summary>
+        public WorldPosition Position { get; private set; }
 
-        public int X { get { return _position.X; } set { _position.X = value; } }
-        public int Y { get { return _position.Y; } set { _position.Y = value; } }
-
-        public Vector2 Speed
-        {
-            get
-            {
-                return new Vector2(speedX, speedY);
-            }
-        }
-        public Player(Game game)
+        /// <summary> Gets or sets the state of the player. </summary>
+        /// <remarks> TODO: Phil: Not sure what this is used for... </remarks>
+        public bool Active { get; set; }
+                
+        public Player(Game game, ISimpleReadOnlyWorldPosition startingPoint)
             : base(game)
         {
-            // TODO: Construct any child components here
+            _playerTexture = game.Content.Load<Texture2D>("player");
+            this.Position = new WorldPosition(startingPoint);
         }
-        public void Initialize(Texture2D tex, Point pos)
-        {
-            PlayerTexture = tex;
-            _position = pos;
-            Active = true;
-            speedX = 0;
-            speedY = 0;
-            MOVEMENTSPEED = 5;//5 pixels
-            base.Initialize();
-        }
-        public void SetTexture(Texture2D tex)
-        {
-            PlayerTexture = tex;
-        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            Rectangle rectangle = new Rectangle(_position.X, _position.Y, Constants.TileWidth, Constants.TileHeight);
-            spriteBatch.Draw(PlayerTexture, rectangle, Color.White);
+            Rectangle rectangle = new Rectangle(Position.X, Position.Y, Constants.Tile.Width, Constants.Tile.Height);
+            spriteBatch.Draw(_playerTexture, rectangle, Color.White);
         }
 
         public void CheckInput()
         {
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.W) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Up))
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.UpKeys))
             {
-                this.Y -= MOVEMENTSPEED;
+                Position.Y -= Constants.Player.MoveSpeed;
             }
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.S) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Down))
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.DownKeys))
             {
-                this.Y += MOVEMENTSPEED;
+                Position.Y += Constants.Player.MoveSpeed;
             }
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.A) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Left))
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.LeftKeys))
             {
-                this.X -= MOVEMENTSPEED;
+                Position.X -= Constants.Player.MoveSpeed;
             }
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.D) || Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Right))
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.RightKeys))
             {
-                this.X += MOVEMENTSPEED;
+                Position.X += Constants.Player.MoveSpeed;
             }
         }
     }

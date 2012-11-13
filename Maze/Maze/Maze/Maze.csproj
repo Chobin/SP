@@ -73,10 +73,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="FullMaze.cs" />
-    <Compile Include="LINQExtensions.cs" />
+    <Compile Include="GameKeyboard.cs" />
+    <Compile Include="Extensions\LINQExtensions.cs" />
     <Compile Include="MazeTile.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="WorldPosition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />

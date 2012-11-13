@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-
+using Maze.Extensions;
 
 namespace Maze
 {
@@ -26,10 +26,10 @@ namespace Maze
         private readonly int _height;
 
         int[,] mazeDigits;
-        public Point StartPosition { get; set; }
-        public Point EndPosition { get; set; }
+        public ISimpleWorldPosition StartPosition { get; private set; }
+        public ISimpleWorldPosition EndPosition { get; private set; }
 
-        /// <summary> 2D Array of tiles, as [row,column]. </summary>
+        /// <summary> 2D Array of tiles, as [column,row]. </summary>
         private MazeTile[,] mazeTiles;
 
         public FullMaze(Game game, int width, int height)
@@ -63,10 +63,8 @@ namespace Maze
             {
                 for (int col = 0; col < mazeTiles.GetLength(1); col++)
                 {
-                    mazeTiles[row, col] = new MazeTile(base.Game)
+                    mazeTiles[row, col] = new MazeTile(base.Game, MazeTile.TileType.No, new Point(col * _noTexture.Width, row * _noTexture.Height))
                     {
-                        X = col * _noTexture.Width,
-                        Y = row * _noTexture.Height,
                         Texture = _noTexture,
                     };
                 }
@@ -78,13 +76,13 @@ namespace Maze
             while (IsFirstTooCloseToSecond(startPosition,endPosition,2))
                 endPosition = new Point(rnd.Next(0, _width), rnd.Next(0, _height));//create a new ending position because this one is too close!
 
-            //we have a good start and end position, so go create the maze from start to finish!
-            StartPosition = startPosition;
-            EndPosition = endPosition;
+            // We have a good start and end position, so go create the maze from start to finish!
+            StartPosition = new WorldPosition(startPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
+            EndPosition = new WorldPosition(endPosition.Inflate(Constants.Tile.Width, Constants.Tile.Height));
 
             // Start/End Tiles can use the Yes texture.
-            mazeTiles[startPosition.X, startPosition.Y].Texture = _startTexture;
-            mazeTiles[endPosition.X, endPosition.Y].Texture = _endTexture;
+            mazeTiles[startPosition.Y, startPosition.X].Texture = _startTexture;
+            mazeTiles[endPosition.Y, endPosition.X].Texture = _endTexture;
 
             base.Initialize();
         }
