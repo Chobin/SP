@@ -36,8 +36,8 @@ namespace Maze
         /// <summary> Gets the if any of the specified keys are down for this instance. </summary>
         public bool IsKeyDown(params Keys[] keys)
         {
+            var keyboardState = Keyboard.GetState(_playerIndex);
             return (from key in keys
-                    let keyboardState = Keyboard.GetState(_playerIndex)
                     where keyboardState.IsKeyDown(key)
                     select key).Any();
         }
