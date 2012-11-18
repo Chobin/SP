@@ -15,6 +15,7 @@ namespace Maze
 
         /// <summary> Gets the position of the player. </summary>
         public WorldPosition Position { get; private set; }
+        public WorldPosition LastPosition { get; private set; }
 
         /// <summary> Gets or sets the state of the player. </summary>
         /// <remarks> TODO: Phil: Not sure what this is used for... </remarks>
@@ -25,6 +26,7 @@ namespace Maze
         {
             _playerTexture = game.Content.Load<Texture2D>("player");
             this.Position = new WorldPosition(startingPoint);
+            this.LastPosition = this.Position;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -32,9 +34,16 @@ namespace Maze
             Rectangle rectangle = new Rectangle(Position.X, Position.Y, Constants.Tile.Width, Constants.Tile.Height);
             spriteBatch.Draw(_playerTexture, rectangle, Color.White);
         }
-
+        public void SetLastPosition()
+        {
+            //why doesnt this workkkkkkkkkkkk!
+            this.Position.X = this.LastPosition.X;
+            //Position = new WorldPosition(LastPosition);
+            this.Position.Y = this.LastPosition.Y;
+        }
         public void CheckInput()
         {
+            this.LastPosition = this.Position;
             if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.UpKeys))
             {
                 Position.Y -= Constants.Player.MoveSpeed;

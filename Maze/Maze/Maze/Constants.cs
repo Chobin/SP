@@ -9,9 +9,9 @@ namespace Maze
     {
         public struct Maze
         {
-            public const int Width = 10;
+            public const int Width = 25;
             public const int WidthPixels = Width * Tile.Width;
-            public const int Height = 10;
+            public const int Height = 25;
             public const int HeightPixels = Height * Tile.Height;
         }
 

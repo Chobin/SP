@@ -136,5 +136,45 @@ namespace Maze
                 mazeTile.Draw(spriteBatch);
             }
         }
+        public int IsThisCollided(WorldPosition pos)
+        {
+            float xFloat = ((float)pos.Left / (float)Constants.Tile.Width);
+            float yFloat = ((float)pos.Top / (float)Constants.Tile.Height);
+            int x = (pos.Left / Constants.Tile.Width) -1;//get the closest width row
+            int y = (pos.Top / Constants.Tile.Height) -1;//get the closest height row
+            int xEnd = x + 3;
+            int yEnd = y + 3;
+            if(x < 0)
+                x = 0;
+            if(xEnd > mazeTiles.GetLength(0))
+                xEnd = mazeTiles.GetLength(0);
+            if(y < 0)
+                y = 0;
+            if(yEnd > mazeTiles.GetLength(1))
+                yEnd = mazeTiles.GetLength(1);
+            for (int col = y; col < yEnd; col++)
+            {
+                for (int row = x; row < xEnd; row++)
+                {
+                    if (mazeTiles[col, row].TileType == MazeTile.ETileType.No)
+                    {
+                        MazeTile currentTile = mazeTiles[col, row];
+                        Rectangle mazeRect = new Rectangle(currentTile.Position.X, currentTile.Position.Y, currentTile.Position.Right - currentTile.Position.Left, currentTile.Position.Bottom - currentTile.Position.Top);
+                        Rectangle playerRect = new Rectangle(pos.X, pos.Y, pos.Right - pos.Left, pos.Bottom - pos.Top);
+                        if (playerRect.Intersects(mazeRect))
+                            return 1;
+                    }
+                    else if (mazeTiles[col, row].TileType == MazeTile.ETileType.Yes && mazeTiles[col, row].TileSubType == MazeTile.ETileSubType.End)
+                    {
+                        MazeTile currentTile = mazeTiles[col, row];
+                        Rectangle mazeRect = new Rectangle(currentTile.Position.X, currentTile.Position.Y, currentTile.Position.Right - currentTile.Position.Left, currentTile.Position.Bottom - currentTile.Position.Top);
+                        Rectangle playerRect = new Rectangle(pos.X, pos.Y, pos.Right - pos.Left, pos.Bottom - pos.Top);
+                        if (playerRect.Intersects(mazeRect))
+                            return 2;
+                    }
+                }
+            }
+            return 0;
+        }
     }
 }

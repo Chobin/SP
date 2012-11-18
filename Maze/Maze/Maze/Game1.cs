@@ -19,6 +19,7 @@ namespace Maze
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player _player;
+       // private WorldPosition _oldPlayerPosition;
         private FullMaze _currentMaze;
 
         public Game1()
@@ -27,6 +28,9 @@ namespace Maze
             _graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "Content";
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 820;
+
         }
 
         /// <summary>
@@ -64,6 +68,7 @@ namespace Maze
             // Initialize the player, informing it of it's starting point, somewhere within the maze, as the randomly generated maze tells us.
             _player = new Player(this, _currentMaze.StartPosition);
             _player.Initialize();
+            //_oldPlayerPosition = _player.Position;
         }
 
         private void Reload()
@@ -78,6 +83,7 @@ namespace Maze
 
         protected override void Update(GameTime gameTime)
         {
+            //_oldPlayerPosition = _player.Position;
             // At the start of every Update frame, the Game Keyboard must be updated so we know what has changed between frames.
             GameKeyboard.UpdateKeyboardStates();
 
@@ -108,6 +114,17 @@ namespace Maze
                 _player.Position.Bottom = Constants.Maze.HeightPixels;
             else if (_player.Position.Top < 0)
                 _player.Position.Top = 0;
+            //get closest tile
+            int collisionNum = _currentMaze.IsThisCollided(_player.Position);
+            if (collisionNum > 0)
+            {
+                Console.WriteLine("Collision!!");
+                if (collisionNum == 1)//normal player collision so reset it!
+                    _player.SetLastPosition();
+                else if (collisionNum == 2)//hit the end position!
+                    this.Reload();
+            }
+            //Console.WriteLine("Player Position x:" + _player.Position.X + " Y:" + _player.Position.Y);
         }
 
         protected override void Draw(GameTime gameTime)
