@@ -26,7 +26,7 @@ namespace Maze
         {
             _playerTexture = game.Content.Load<Texture2D>("player");
             this.Position = new WorldPosition(startingPoint);
-            this.LastPosition = this.Position;
+            this.LastPosition = new WorldPosition(startingPoint);
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -43,7 +43,9 @@ namespace Maze
         }
         public void CheckInput()
         {
-            this.LastPosition = this.Position;
+            this.LastPosition.X = this.Position.X;
+            //Position = new WorldPosition(LastPosition);
+            this.LastPosition.Y = this.Position.Y;
             if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.UpKeys))
             {
                 Position.Y -= Constants.Player.MoveSpeed;
