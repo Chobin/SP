@@ -31,7 +31,7 @@ namespace Maze
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Rectangle rectangle = new Rectangle(Position.X, Position.Y, Constants.Tile.Width, Constants.Tile.Height);
+            Rectangle rectangle = new Rectangle(Position.X, Position.Y, Constants.Player.Width, Constants.Player.Height);
             spriteBatch.Draw(_playerTexture, rectangle, Color.White);
         }
         public void SetLastPosition()

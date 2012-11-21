@@ -52,6 +52,11 @@ namespace Maze
         /// <remarks> By abstracting the Point struct beneath, we ensure we don't accidentally fall prey to struct manipulation issues. </remarks>
         public int Bottom
         {
+            get { return this.Y + Constants.Tile.Height; }
+            set { this.Y = Math.Max(0, value - Constants.Tile.Height); }
+        }
+        public int BottomP
+        {
             get { return this.Y + Constants.Player.Height; }
             set { this.Y = Math.Max(0, value - Constants.Player.Height); }
         }
@@ -67,6 +72,11 @@ namespace Maze
         /// <summary> Gets or sets the Right position of the instance. </summary>
         /// <remarks> By abstracting the Point struct beneath, we ensure we don't accidentally fall prey to struct manipulation issues. </remarks>
         public int Right
+        {
+            get { return this.X + Constants.Tile.Width; }
+            set { this.X = Math.Max(0, value - Constants.Tile.Width); }
+        }
+        public int RightP
         {
             get { return this.X + Constants.Player.Width; }
             set { this.X = Math.Max(0, value - Constants.Player.Width); }

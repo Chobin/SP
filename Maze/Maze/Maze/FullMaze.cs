@@ -156,19 +156,16 @@ namespace Maze
             {
                 for (int row = x; row < xEnd; row++)
                 {
-                    if (mazeTiles[col, row].TileType == MazeTile.ETileType.No)
+                    MazeTile currentTile = mazeTiles[col, row];
+                    Rectangle mazeRect = new Rectangle(currentTile.Position.X, currentTile.Position.Y, currentTile.Position.Right - currentTile.Position.Left, currentTile.Position.Bottom - currentTile.Position.Top);
+                    Rectangle playerRect = new Rectangle(pos.X, pos.Y, pos.RightP - pos.Left, pos.BottomP - pos.Top);
+                    if (currentTile.TileType == MazeTile.ETileType.No)
                     {
-                        MazeTile currentTile = mazeTiles[col, row];
-                        Rectangle mazeRect = new Rectangle(currentTile.Position.X, currentTile.Position.Y, currentTile.Position.Right - currentTile.Position.Left, currentTile.Position.Bottom - currentTile.Position.Top);
-                        Rectangle playerRect = new Rectangle(pos.X, pos.Y, pos.Right - pos.Left, pos.Bottom - pos.Top);
                         if (playerRect.Intersects(mazeRect))
                             return 1;
                     }
-                    else if (mazeTiles[col, row].TileType == MazeTile.ETileType.Yes && mazeTiles[col, row].TileSubType == MazeTile.ETileSubType.End)
+                    else if (currentTile.TileType == MazeTile.ETileType.Yes && currentTile.TileSubType == MazeTile.ETileSubType.End)
                     {
-                        MazeTile currentTile = mazeTiles[col, row];
-                        Rectangle mazeRect = new Rectangle(currentTile.Position.X, currentTile.Position.Y, currentTile.Position.Right - currentTile.Position.Left, currentTile.Position.Bottom - currentTile.Position.Top);
-                        Rectangle playerRect = new Rectangle(pos.X, pos.Y, pos.Right - pos.Left, pos.Bottom - pos.Top);
                         if (playerRect.Intersects(mazeRect))
                             return 2;
                     }
