@@ -21,6 +21,7 @@ namespace Maze
         private Player _player;
        // private WorldPosition _oldPlayerPosition;
         private FullMaze _currentMaze;
+        private GameState _currentState;
 
         public Game1()
         {

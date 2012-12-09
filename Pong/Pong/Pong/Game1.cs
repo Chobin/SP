@@ -45,6 +45,7 @@ namespace Pong
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            graphics.PreferredBackBufferHeight = 820;
         }
 
         /// <summary>

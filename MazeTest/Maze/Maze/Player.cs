@@ -39,6 +39,26 @@ namespace Maze
             this.Position.X = this.LastPosition.X;
             this.Position.Y = this.LastPosition.Y;
         }
+        public int GetDirection()
+        {
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.UpKeys))
+            {
+                return 1;
+            }
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.DownKeys))
+            {
+                return 2;
+            }
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.LeftKeys))
+            {
+                return 3;
+            }
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.RightKeys))
+            {
+                return 4;
+            }
+            return 0;
+        }
         public void CheckInput()
         {
             this.LastPosition.X = this.Position.X;
@@ -58,6 +78,10 @@ namespace Maze
             if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.RightKeys))
             {
                 Position.X += Constants.Player.MoveSpeed;
+            }
+            if (GameKeyboard.PlayerOne.IsKeyDown(GameKeyboard.Presets.ActionKeys))
+            {
+
             }
         }
     }
