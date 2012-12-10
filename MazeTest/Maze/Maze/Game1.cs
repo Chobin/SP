@@ -26,6 +26,7 @@ namespace Maze
         private int _numSpaces;
         private int _numMazeCompleted;
         private GameState _gameState;
+        private TimeSpan _timeSinceMazeStart;
 
         public Game1()
         {
@@ -39,6 +40,9 @@ namespace Maze
             _gameState = new GameState();
             _gameState.gameState = GameState.InState.Menu;
             _gameState.menuState = GameState.MenuState.Start;
+            GameTime time;
+            time = new GameTime();
+            _timeSinceMazeStart = time.TotalGameTime;
         }
 
         /// <summary>
@@ -60,7 +64,8 @@ namespace Maze
 
             _fogOfWar = Content.Load<Texture2D>("fogofwar");
             _font = Content.Load<SpriteFont>("Score");
-            CreateAll();
+            GameTime time = new GameTime();
+            CreateAll(time);
         }
         
         /// <summary> UnloadContent will be called once per game and is the place to unload all content. </summary>
@@ -69,7 +74,7 @@ namespace Maze
             // TODO: Unload any non ContentManager content here
         }
 
-        private void CreateAll()
+        private void CreateAll(GameTime time)
         {
             // Create out Maze, which is the entire "world" the player will interact with.
             _currentMaze = new FullMaze(this, Constants.Maze.Width, Constants.Maze.Height);
@@ -80,16 +85,17 @@ namespace Maze
             _player.Initialize();
             //_oldPlayerPosition = _player.Position;
             _numSpaces = 5;
+            _timeSinceMazeStart = time.TotalGameTime;
         }
 
-        private void Reload()
+        private void Reload(GameTime time)
         {
             _player.Dispose();
             _player = null;
             _currentMaze.Dispose();
             _currentMaze = null;
 
-            CreateAll();
+            CreateAll(time);
         }
 
         protected override void Update(GameTime gameTime)
@@ -101,12 +107,17 @@ namespace Maze
                 case GameState.InState.Started:
 
                     // At the start of every Update frame, the Game Keyboard must be updated so we know what has changed between frames.
-
+                    if (_gameState.menuState != GameState.MenuState.Off)
+                    {
+                        _gameState.menuState = GameState.MenuState.Off;
+                        this.Reload(gameTime);
+                    }
                     // Allows the game to exit
                     if (GameKeyboard.PlayerOne.IsKeyDown(Keys.Escape))
+                    {
                         _gameState.gameState = GameState.InState.Menu;
-                    //if (GameKeyboard.PlayerOne.IsKeyDownFromUp(Keys.F5))
-                    //    this.Reload();
+                        _gameState.menuState = GameState.MenuState.Start;
+                    }
                     if (GameKeyboard.PlayerOne.IsKeyDownFromUp(Keys.Space) && _numSpaces > 0)
                     {
                         int direction;
@@ -116,7 +127,7 @@ namespace Maze
                     }
 
                     _player.CheckInput();
-                    CheckPlayerCollisions();
+                    CheckPlayerCollisions(gameTime);
                     break;
                 case GameState.InState.Menu:
                     if (GameKeyboard.PlayerOne.IsKeyUpFromDown(Keys.Up) || GameKeyboard.PlayerOne.IsKeyUpFromDown(Keys.W))
@@ -141,10 +152,10 @@ namespace Maze
                                 _gameState.gameState = GameState.InState.Started;
                                 break;
                             case GameState.MenuState.Something:
-                                //start the game!
+                                //something... ?
                                 break;
                             case GameState.MenuState.Quit:
-                                //start the game!
+                                //quit the game!
                                 _gameState.gameState = GameState.InState.Quit;
                                 break;
                         }
@@ -161,7 +172,7 @@ namespace Maze
 
         // TODO: This entire method needs to be in the Player.Update method, to prevent the movement if we try to go over the bounds. Otherwise, we won't be able to scan the entire Tile Map to see
         // if the position we've moved to can somehow be rolled back. This is crucial for tile collision.
-        private void CheckPlayerCollisions()
+        private void CheckPlayerCollisions(GameTime gameTime)
         {
             // Ensure the player doesn't walk beyond the bounds of the game, and if so, force them back into the area.
             if (_player.Position.Right > Constants.Maze.WidthPixels)
@@ -182,7 +193,7 @@ namespace Maze
                 else if (collisionNum == 2)//hit the end position!
                 {
                     _numMazeCompleted++;
-                    this.Reload();
+                    this.Reload(gameTime);
                 }
             }
             //Console.WriteLine("Player Position x:" + _player.Position.X + " Y:" + _player.Position.Y);
@@ -210,6 +221,13 @@ namespace Maze
                     _spriteBatch.DrawString(_font, TextToDraw, new Vector2((float)_graphics.PreferredBackBufferWidth - 400, 50), new Color(255, 255, 255));
                     TextToDraw = "Number of mazes completed:" + _numMazeCompleted;
                     _spriteBatch.DrawString(_font, TextToDraw, new Vector2((float)_graphics.PreferredBackBufferWidth - 400, 100), new Color(255, 255, 255));
+                    //
+                    TimeSpan sinceLast = (gameTime.TotalGameTime - _timeSinceMazeStart);
+                    String timerText = "Time it takes you to complete the maze:" + sinceLast.Hours + ":" + sinceLast.Minutes + ":" + sinceLast.Seconds + ":" + sinceLast.Milliseconds;
+                    Random rand = new Random();
+                    Color Timercolor;
+                    Timercolor = new Color((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble());
+                    _spriteBatch.DrawString(_font, timerText, new Vector2(GraphicsDevice.Viewport.Width / 3, GraphicsDevice.Viewport.Height / 2), Timercolor);
                     _spriteBatch.End();
                     break;
                 case GameState.InState.Menu:
